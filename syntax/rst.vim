@@ -244,6 +244,35 @@ for s:filetype in keys(g:rst_syntax_code_list)
                 \.'\)'
 
     exe 'syn include @rst'.s:filetype.' syntax/'.s:filetype.'.vim'
+
+    " 'c' should not be placed together with `cpp' in g:rst_syntax_code_list,
+    " becasue C++'s syntax file itself loads C's syntax file, executing same
+    " command twice will make a syntax group have duplicate patterns and get
+    " C++/C code matched twice, thus causing highlighting issues, e.g. region
+    " incorrectly extended.
+    " Here we graps the C synatx groups out of @rstcpp cluster, and add them to
+    " @rstc cluster to enable highlighting for C.
+    if s:filetype == 'cpp'
+      " For Vim with versioni >= 7.4-2008, Using "execute()" function istead of
+      " "redir" is simpler and less problematic. See E930
+      if exists('*execute')
+	let s:tmp = execute('syn list @rst'.s:filetype)
+      else
+	redir => s:tmp | silent exe 'syn list @rst'.s:filetype | redir END
+      endif
+
+      let s:cpp_syn_groups = matchstr(s:tmp, 'cluster=\zs[^\n]*')
+      let s:c_syn_groups = join(filter(split(s:cpp_syn_groups, ','), 'v:val !~ "^cpp"'), ',')
+      exe 'syn cluster rstc contains='.s:c_syn_groups
+      exe 'syn region rstDirectivec'
+	      \.' matchgroup=rstDirective fold'
+	      \.' start="\c\%(sourcecode\|code\%(-block\)\=\)::\s\+c\_s*\n\ze\z(\s\+\)"'
+	      \.' skip=#^$#'
+	      \.' end=#^\z1\@!#'
+	      \.' contains=@NoSpell,@rstc'
+      exe 'syn cluster rstDirectives add=rstDirectivec'
+    endif
+
     exe 'syn region rstDirective'.s:filetype
                 \.' matchgroup=rstDirective fold'
                 \.' start="\c\%(sourcecode\|code\%(-block\)\=\)::\s\+'.s:alias_pattern.'\_s*\n\ze\z(\s\+\)"'
