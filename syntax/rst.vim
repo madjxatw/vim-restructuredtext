@@ -211,14 +211,19 @@ if !exists('g:rst_syntax_code_list')
     " will both be highlighted as C++ code. As shown by the latter block
     " pattern matching will be case-insensitive.
     let g:rst_syntax_code_list = {
-        \ 'vim': ['vim'],
-        \ 'java': ['java'],
+        \ 'awk': ['awk'],
         \ 'cpp': ['cpp', 'c++'],
+        \ 'css': ['css'],
+        \ 'html': ['html'],
+        \ 'java': ['java'],
+        \ 'javascript': ['javascript', 'js'],
         \ 'lisp': ['lisp'],
-        \ 'php': ['php'],
-        \ 'python': ['python'],
         \ 'perl': ['perl'],
+        \ 'php': ['php'],
+        \ 'python': ['python', 'py', 'python2', 'py2', 'python3', 'py3'],
         \ 'sh': ['sh'],
+        \ 'vim': ['vim'],
+        \ 'xml': ['xml'],
         \ }
 elseif type(g:rst_syntax_code_list) == type([])
     " backward compatibility with former list format
