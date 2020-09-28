@@ -83,9 +83,9 @@ syn region rstHyperlinkTarget matchgroup=rstDirective
       \ start=+^__\_s+ skip=+^$+ end=+^\s\@!+
 
 execute 'syn region rstExDirective contained matchgroup=rstDirective' .
-      \ ' start=+' . s:ReferenceName . '::\_s+' .
+      \ ' start=+' . s:ReferenceName . '::\s*\(\S*\)\?\s*\n\%(\s*:.*:\s*.*\s*\n\)*\n\ze\z(\s\+\)+'
       \ ' skip=+^$+' .
-      \ ' end=+^\s\@!+ contains=@rstCruft,rstLiteralBlock,rstExplicitMarkup'
+      \ ' end=+^\z1\@!+ contains=@rstCruft,rstLiteralBlock,rstExplicitMarkup'
 
 execute 'syn match rstSubstitutionDefinition contained' .
       \ ' /|.*|\_s\+/ nextgroup=@rstDirectives'
